@@ -139,6 +139,7 @@
                     alert("You win!");
                     level += 1;
                     document.getElementById("level").innerText = `Level: ${level}`;
+                    newGame();
                 }
                 requestAnimationFrame(animate);
             }
