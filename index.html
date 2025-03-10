@@ -265,10 +265,14 @@
             function resizeCanvas() {
                 const container = document.getElementById('game-container');
                 const containerWidth = container.clientWidth;
-                if (window.innerWidth <= 400) {
+                if (window.innerWidth <= 768) {
                     gridWidth = 16;
                     gridHeight = 25;
+                    
                     squareWidth = containerWidth / gridWidth;
+                    if (window.innerWidth > 400) {
+                        squareWidth = Math.min(squareWidth, 30);
+                    }
                 } else {
                     gridWidth = 20;
                     gridHeight = 20;
@@ -281,13 +285,11 @@
                     redrawCanvas();
                 }
             }
-            
             window.addEventListener('resize', resizeCanvas);
             resizeCanvas();
             function redrawCanvas() {
                 ctx.fillStyle = "#1e1e2f";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
                 for (let y = 0; y < gameGrid.length; y++) {
                     for (let x = 0; x < gameGrid[y].length; x++) {
                         const cell = gameGrid[y][x];
