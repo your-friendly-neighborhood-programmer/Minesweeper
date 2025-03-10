@@ -232,9 +232,6 @@
                 <p id="mines">Mines: 0</p>
                 <p id="timer">Time: 0s</p>
             </div>
-            <div class="info-row">
-                <p id="canvasSize"></p>
-            </div>
         </div>
         
         <div id="game-container">
@@ -263,16 +260,10 @@
             let flagMode = false;
             let squareWidth = 30;
             let gridSize = 20;
-            
-            // Handle window resize events
             function resizeCanvas() {
                 const container = document.getElementById('game-container');
                 const containerWidth = container.clientWidth;
-                
-                // Calculate the scale factor
                 const scaleFactor = containerWidth / 600;
-                
-                // Adjust square width based on screen size
                 if (window.innerWidth <= 400) {
                     gridSize = 15;
                     squareWidth = containerWidth / gridSize;
@@ -280,16 +271,8 @@
                     gridSize = 20;
                     squareWidth = 30;
                 }
-                
-                // Adjust canvas dimensions
                 canvas.width = gridSize * squareWidth;
                 canvas.height = gridSize * squareWidth;
-                
-                // Update canvas size info
-                document.getElementById("canvasSize").innerText = 
-                    `Grid: ${gridSize}x${gridSize}`;
-                    
-                // Redraw everything
                 if (gameGrid.length > 0) {
                     redrawCanvas();
                 }
@@ -297,16 +280,13 @@
             
             window.addEventListener('resize', resizeCanvas);
             resizeCanvas();
-            
             function redrawCanvas() {
-                // Clear and redraw all cells
                 ctx.fillStyle = "#1e1e2f";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
                 for (let y = 0; y < gameGrid.length; y++) {
                     for (let x = 0; x < gameGrid[y].length; x++) {
                         const cell = gameGrid[y][x];
-                        
                         if (cell.mine && cell.toggled) {
                             ctx.fillStyle = "#FF1744"; 
                             ctx.fillRect((x * squareWidth) + 2, (y * squareWidth) + 2, squareWidth - 4, squareWidth - 4);
@@ -319,7 +299,6 @@
                             ctx.strokeStyle = "#39ff14";
                             ctx.lineWidth = 1;
                             ctx.strokeRect((x * squareWidth) + 2, (y * squareWidth) + 2, squareWidth - 4, squareWidth - 4);
-                            
                             if (cell.neighbors > 0) {
                                 ctx.font = `bold ${squareWidth * 0.7}px Orbitron`;
                                 if (cell.neighbors === 1) ctx.fillStyle = "#39ff14";  // neon green
@@ -352,13 +331,10 @@
                     }
                 }
             }
-            
             function draw() {
                 ctx.fillStyle = "#1e1e2f";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
                 gameGrid.length = 0;
-                
                 for (let y = 0; y < gridSize; y++) {
                     const row = [];
                     for (let x = 0; x < gridSize; x++) {
@@ -367,10 +343,8 @@
                         const flagged = false;
                         const neighbors = 0;
                         row.push({x, y, mine, toggled, flagged, neighbors});
-                        
                         ctx.fillStyle = "#2a2a3a";
                         ctx.fillRect((x * squareWidth) + 2, (y * squareWidth) + 2, squareWidth - 4, squareWidth - 4);
-                        
                         ctx.strokeStyle = "#0ff0fc";
                         ctx.lineWidth = 0.5;
                         ctx.strokeRect((x * squareWidth) + 2, (y * squareWidth) + 2, squareWidth - 4, squareWidth - 4);
@@ -378,16 +352,12 @@
                     gameGrid.push(row);
                 }
             }
-            
-            // Flag toggle button
             document.getElementById("flagToggle").addEventListener('click', () => {
                 flagMode = !flagMode;
                 document.getElementById("flagToggle").textContent = 
                     flagMode ? "Flag Mode: On" : "Flag Mode: Off";
                 document.getElementById("flagToggle").classList.toggle("active", flagMode);
             });
-            
-            // Handle touch events
             canvas.addEventListener('click', handleClick);
             canvas.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
@@ -401,18 +371,14 @@
                     placeFlag(row, col);
                 }
             });
-            
-            // Handle touch on mobile
             canvas.addEventListener('touchstart', function(e) {
-                e.preventDefault(); // Prevent scrolling when touching the canvas
-                
+                e.preventDefault(); 
                 const rect = canvas.getBoundingClientRect();
                 const touch = e.touches[0];
                 const x = touch.clientX - rect.left;
                 const y = touch.clientY - rect.top;
                 const col = Math.floor(x / squareWidth);
                 const row = Math.floor(y / squareWidth);
-                
                 if (isValidCell(row, col)) {
                     if (flagMode) {
                         placeFlag(row, col);
@@ -425,14 +391,12 @@
             function isValidCell(row, col) {
                 return row >= 0 && row < gridSize && col >= 0 && col < gridSize;
             }
-            
             function handleClick(e) {
                 const rect = canvas.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 const col = Math.floor(x / squareWidth);
                 const row = Math.floor(y / squareWidth);
-                
                 if (isValidCell(row, col)) {
                     if (flagMode) {
                         placeFlag(row, col);
@@ -441,14 +405,11 @@
                     }
                 }
             }
-
             function toggleCell(row, col) {
                 if (!isValidCell(row, col)) return;
-                
                 const cell = gameGrid[row][col];
                 if (cell.flagged || cell.toggled) return;
                 cell.toggled = true;
-                
                 if (cell.mine) {
                     cell.toggled = true;
                     reveal();
@@ -460,12 +421,8 @@
                     }, 500);
                     return;
                 }
-                
-                // Redraw the cell
                 redrawCanvas();
-                
                 if (cell.neighbors === 0) {
-                    // Reveal adjacent cells
                     if (row > 0) toggleCell(row - 1, col);
                     if (row < gameGrid.length - 1) toggleCell(row + 1, col);
                     if (col > 0) toggleCell(row, col - 1);
@@ -475,10 +432,8 @@
                     if (row < gameGrid.length - 1 && col > 0) toggleCell(row + 1, col - 1);
                     if (row < gameGrid.length - 1 && col < gameGrid[row].length - 1) toggleCell(row + 1, col + 1);
                 }
-                
                 checkWin();
             }
-            
             function checkWin() {
                 let isWon = true;
                 for (let y = 0; y < gridSize; y++) {
@@ -487,7 +442,6 @@
                         if (cell.mine && !cell.flagged) isWon = false;
                     }
                 }
-                
                 if (isWon) {
                     setTimeout(() => {
                         alert("You win!");
@@ -497,7 +451,6 @@
                     }, 100);
                 }
             }
-            
             function makeMines() {
                 let minesMade = 0;
                 while (minesMade < mines) {
@@ -509,7 +462,6 @@
                     } 
                }
             }
-            
             function getNeighbors() {
                 for (let y = 0; y < gridSize; y++) {
                     for (let x = 0; x < gridSize; x++) {
@@ -527,7 +479,6 @@
                     }
                 }
             }
-            
             function reveal() {
                 for (let y = 0; y < gridSize; y++) {
                     for (let x = 0; x < gridSize; x++) {
@@ -536,7 +487,6 @@
                 }
                 redrawCanvas();
             }
-            
             function placeFlag(row, col) {
                 const cell = gameGrid[row][col];
                 if (cell.toggled) return;
@@ -545,7 +495,6 @@
                 redrawCanvas();
                 checkWin();
             }
-            
             function updateFlagCount() {
                 let flagCount = 0;
                 for (let y = 0; y < gridSize; y++) {
@@ -555,7 +504,6 @@
                 }
                 document.getElementById("flags").innerText = `Flags: ${flagCount}`;
             }
-            
             function timer() {
                 if (timerInterval) {
                     clearInterval(timerInterval);
@@ -567,7 +515,6 @@
                     document.getElementById("timer").innerText = `Time: ${time}s`;
                 }, 1000);
             }
-            
             function newGame() {
                 gameGrid.length = 0;
                 mines = 15 + (level * 5);
@@ -583,7 +530,6 @@
                 document.getElementById("mines").innerText = `Mines: ${mines}`;
                 document.getElementById("level").innerText = `Level: ${level}`;
             }
-            
             document.getElementById("newGame").addEventListener("click", newGame);
             newGame();
         </script>
