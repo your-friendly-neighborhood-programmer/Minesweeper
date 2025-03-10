@@ -56,4 +56,4 @@ Minesweeper is a single-player puzzle game where the objective is to clear a rec
 
 ## Getting Started
 
-Simply click <a href="https://your-friendly-neighborhood-programmer.github.io/Minesweeper/">this link</a> or locally open `index.html` in your web browser to play the game.
+Simply click <a href="https://your-friendly-neighborhood-programmer.github.io/Minesweeper/">this link</a> to play the game.
