@@ -1,4 +1,4 @@
-# Minesweeper Game
+# <a href="https://your-friendly-neighborhood-programmer.github.io/Minesweeper/">Minesweeper Game</a>
 
 A classic implementation of the Minesweeper game using HTML, CSS, and JavaScript.
 
