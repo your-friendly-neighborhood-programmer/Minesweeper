@@ -3,20 +3,104 @@
     <head>
         <title>Minesweeper</title>
         <style>
-            canvas {
-                cursor: pointer;
+            @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+            
+            :root {
+                --neon-green: #39ff14;
+                --cyber-blue: #0ff0fc;
+                --cyber-purple: #d300c4;
+                --dark-bg: #121212;
+                --grid-bg: #1e1e2f;
+                --cell-bg: #2a2a3a;
             }
+            
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
             body {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
+                min-height: 100vh;
+                background-color: var(--dark-bg);
+                color: var(--cyber-blue);
+                font-family: 'Orbitron', sans-serif;
+                padding: 20px;
+                text-shadow: 0 0 5px var(--cyber-blue);
             }
+            
+            h1 {
+                color: var(--neon-green);
+                margin-bottom: 20px;
+                font-size: 3rem;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+            }
+            
+            .options {
+                margin: 15px 0;
+            }
+            
+            button#newGame {
+                background-color: var(--cyber-purple);
+                color: #fff;
+                border: 2px solid var(--cyber-blue);
+                padding: 10px 20px;
+                cursor: pointer;
+                font-family: 'Orbitron', sans-serif;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                box-shadow: 0 0 10px var(--cyber-purple);
+                transition: all 0.3s;
+                border-radius: 3px;
+            }
+            
+            button#newGame:hover {
+                background-color: var(--cyber-blue);
+                box-shadow: 0 0 15px var(--cyber-blue);
+                color: var(--dark-bg);
+                transform: scale(1.05);
+            }
+            
             .info {
                 display: flex;
                 justify-content: space-around;
                 flex-direction: column;
                 align-items: center;
+                margin: 15px 0;
+                padding: 10px;
+                border: 1px solid var(--cyber-blue);
+                box-shadow: 0 0 10px var(--cyber-blue);
+                border-radius: 5px;
+                background-color: rgba(15, 240, 252, 0.1);
+                width: 600px;
+            }
+            
+            .info p {
+                margin: 5px 0;
+                font-size: 1.1rem;
+                letter-spacing: 1px;
+            }
+            
+            #level {
+                color: var(--neon-green);
+            }
+            
+            #mines {
+                color: var(--cyber-purple);
+            }
+            
+            canvas {
+                cursor: pointer;
+                border: 3px solid var(--cyber-blue);
+                box-shadow: 0 0 20px var(--cyber-purple), inset 0 0 20px var(--cyber-blue);
+                border-radius: 5px;
             }
         </style>
     </head>
@@ -39,11 +123,12 @@
             const gridSize = 20;
             const gameGrid = [];
             let level = 1;
-            let mines = 1;
+            let mines = 15 + (level * 5); // Fixed to use the proper formula
             let timerInterval = null;
             function draw() {
                 let x = 0;
-                ctx.fillStyle = "darkgray";
+                // Use hardcoded colors instead of CSS variables for canvas drawing
+                ctx.fillStyle = "#1e1e2f"; // grid background color
                 ctx.fillRect(0, 0, 600, 600);
                 for (let y = 0; y < gridSize; y++) {
                     const row = [];
@@ -53,8 +138,15 @@
                         const flagged = false;
                         const neighbors = 0;
                         row.push({x, y, mine, toggled, flagged, neighbors});
-                        ctx.fillStyle = "lightgray";
+                        
+                        // Draw the cell with a visible color
+                        ctx.fillStyle = "#2a2a3a"; // cell background color
                         ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                        
+                        // Add visible border to make cells stand out
+                        ctx.strokeStyle = "#0ff0fc"; // cyber blue border
+                        ctx.lineWidth = 0.5;
+                        ctx.strokeRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                     }
                     gameGrid.push(row);
                 }
@@ -102,35 +194,41 @@
                     for (let x = 0; x < gridSize; x++) {
                         const cell = gameGrid[y][x];
                         if (cell.mine && cell.toggled) {
-                            ctx.fillStyle = "red";
+                            ctx.fillStyle = "#FF1744";  // bright red for mines
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                            ctx.fillStyle = "black";
-                            ctx.font = "20px Arial";
+                            ctx.fillStyle = "white";
+                            ctx.font = "20px Orbitron";
                             ctx.fillText("💣", (x * squareWidth) + 10, (y * squareWidth) + 22);
                         } else if (cell.toggled) {
-                            ctx.fillStyle = "white";
+                            ctx.fillStyle = "#1e2635";  // dark blue
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                             if (cell.neighbors > 0) {
-                                ctx.font = "20px Arial";
-                                if (cell.neighbors === 1) ctx.fillStyle = "blue";
-                                else if (cell.neighbors === 2) ctx.fillStyle = "green";
-                                else if (cell.neighbors === 3) ctx.fillStyle = "red";
-                                else if (cell.neighbors === 4) ctx.fillStyle = "purple";
-                                else if (cell.neighbors === 5) ctx.fillStyle = "maroon";
-                                else if (cell.neighbors === 6) ctx.fillStyle = "turquoise";
-                                else if (cell.neighbors === 7) ctx.fillStyle = "black";
-                                else if (cell.neighbors === 8) ctx.fillStyle = "gray";
+                                ctx.font = "bold 20px Orbitron";
+                                if (cell.neighbors === 1) ctx.fillStyle = "#39ff14";  // neon green
+                                else if (cell.neighbors === 2) ctx.fillStyle = "#0ff0fc";  // cyan
+                                else if (cell.neighbors === 3) ctx.fillStyle = "#d300c4";  // magenta
+                                else if (cell.neighbors === 4) ctx.fillStyle = "#7122FA";  // purple
+                                else if (cell.neighbors === 5) ctx.fillStyle = "#FF10F0";  // pink
+                                else if (cell.neighbors === 6) ctx.fillStyle = "#00FFBA";  // turquoise
+                                else if (cell.neighbors === 7) ctx.fillStyle = "#FFFC00";  // yellow
+                                else if (cell.neighbors === 8) ctx.fillStyle = "#FF3D00";  // orange
                                 ctx.fillText(cell.neighbors, (x * squareWidth) + 15, (y * squareWidth) + 22);
                             }
                         } else if (cell.flagged) {
-                            ctx.fillStyle = "yellow";
+                            ctx.fillStyle = "#2a304d";  // darker blue for flagged cells
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                            ctx.fillStyle = "black";
-                            ctx.font = "20px Arial";
+                            ctx.fillStyle = "#FF10F0";  // neon pink
+                            ctx.font = "20px Orbitron";
                             ctx.fillText("🚩", (x * squareWidth) + 10, (y * squareWidth) + 22);
                         } else {
-                            ctx.fillStyle = "lightgray";
+                            // Replace var(--cell-bg) with hardcoded color
+                            ctx.fillStyle = "#2a2a3a";  // cell background color
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                            
+                            // Replace var(--cyber-blue) with hardcoded color
+                            ctx.strokeStyle = "#0ff0fc"; // cyber blue border
+                            ctx.lineWidth = 0.5;
+                            ctx.strokeRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                         }
                         if (cell.mine && !cell.flagged) isWon = false;
                     }
