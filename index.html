@@ -260,19 +260,23 @@
             let flagMode = false;
             let squareWidth = 30;
             let gridSize = 20;
+            let gridWidth = 20;
+            let gridHeight = 20;
             function resizeCanvas() {
                 const container = document.getElementById('game-container');
                 const containerWidth = container.clientWidth;
-                const scaleFactor = containerWidth / 600;
                 if (window.innerWidth <= 400) {
-                    gridSize = 15;
-                    squareWidth = containerWidth / gridSize;
+                    gridWidth = 16;
+                    gridHeight = 25;
+                    squareWidth = containerWidth / gridWidth;
                 } else {
-                    gridSize = 20;
+                    gridWidth = 20;
+                    gridHeight = 20;
                     squareWidth = 30;
                 }
-                canvas.width = gridSize * squareWidth;
-                canvas.height = gridSize * squareWidth;
+                gridSize = gridWidth;
+                canvas.width = gridWidth * squareWidth;
+                canvas.height = gridHeight * squareWidth;
                 if (gameGrid.length > 0) {
                     redrawCanvas();
                 }
@@ -335,9 +339,9 @@
                 ctx.fillStyle = "#1e1e2f";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 gameGrid.length = 0;
-                for (let y = 0; y < gridSize; y++) {
+                for (let y = 0; y < gridHeight; y++) {
                     const row = [];
-                    for (let x = 0; x < gridSize; x++) {
+                    for (let x = 0; x < gridWidth; x++) {
                         const mine = false; 
                         const toggled = false;
                         const flagged = false;
@@ -389,7 +393,7 @@
             }, false);
             
             function isValidCell(row, col) {
-                return row >= 0 && row < gridSize && col >= 0 && col < gridSize;
+                return row >= 0 && row < gridHeight && col >= 0 && col < gridWidth;
             }
             function handleClick(e) {
                 const rect = canvas.getBoundingClientRect();
@@ -436,8 +440,8 @@
             }
             function checkWin() {
                 let isWon = true;
-                for (let y = 0; y < gridSize; y++) {
-                    for (let x = 0; x < gridSize; x++) {
+                for (let y = 0; y < gridHeight; y++) {
+                    for (let x = 0; x < gridWidth; x++) {
                         const cell = gameGrid[y][x];
                         if (cell.mine && !cell.flagged) isWon = false;
                     }
@@ -454,8 +458,8 @@
             function makeMines() {
                 let minesMade = 0;
                 while (minesMade < mines) {
-                    const xMines = Math.floor(Math.random() * gridSize);
-                    const yMines = Math.floor(Math.random() * gridSize);
+                    const xMines = Math.floor(Math.random() * gridWidth);
+                    const yMines = Math.floor(Math.random() * gridHeight);
                     if (!gameGrid[yMines][xMines].mine) {
                         gameGrid[yMines][xMines].mine = true;
                         minesMade++;
@@ -463,25 +467,25 @@
                }
             }
             function getNeighbors() {
-                for (let y = 0; y < gridSize; y++) {
-                    for (let x = 0; x < gridSize; x++) {
+                for (let y = 0; y < gridHeight; y++) {
+                    for (let x = 0; x < gridWidth; x++) {
                         const cell = gameGrid[y][x];
                         cell.neighbors = 0;
                         if (cell.mine) continue;
                         if (y > 0 && gameGrid[y - 1][x].mine) cell.neighbors++;
-                        if (y < gridSize - 1 && gameGrid[y + 1][x].mine) cell.neighbors++;
+                        if (y < gridHeight - 1 && gameGrid[y + 1][x].mine) cell.neighbors++;
                         if (x > 0 && gameGrid[y][x - 1].mine) cell.neighbors++;
-                        if (x < gridSize - 1 && gameGrid[y][x + 1].mine) cell.neighbors++;
+                        if (x < gridWidth - 1 && gameGrid[y][x + 1].mine) cell.neighbors++;
                         if (y > 0 && x > 0 && gameGrid[y - 1][x - 1].mine) cell.neighbors++;
-                        if (y > 0 && x < gridSize - 1 && gameGrid[y - 1][x + 1].mine) cell.neighbors++;
-                        if (y < gridSize - 1 && x > 0 && gameGrid[y + 1][x - 1].mine) cell.neighbors++;
-                        if (y < gridSize - 1 && x < gridSize - 1 && gameGrid[y + 1][x + 1].mine) cell.neighbors++;
+                        if (y > 0 && x < gridWidth - 1 && gameGrid[y - 1][x + 1].mine) cell.neighbors++;
+                        if (y < gridHeight - 1 && x > 0 && gameGrid[y + 1][x - 1].mine) cell.neighbors++;
+                        if (y < gridHeight - 1 && x < gridWidth - 1 && gameGrid[y + 1][x + 1].mine) cell.neighbors++;
                     }
                 }
             }
             function reveal() {
-                for (let y = 0; y < gridSize; y++) {
-                    for (let x = 0; x < gridSize; x++) {
+                for (let y = 0; y < gridHeight; y++) {
+                    for (let x = 0; x < gridWidth; x++) {
                         gameGrid[y][x].toggled = true;
                     }
                 }
@@ -497,8 +501,8 @@
             }
             function updateFlagCount() {
                 let flagCount = 0;
-                for (let y = 0; y < gridSize; y++) {
-                    for (let x = 0; x < gridSize; x++) {
+                for (let y = 0; y < gridHeight; y++) {
+                    for (let x = 0; x < gridWidth; x++) {
                         if (gameGrid[y][x].flagged) flagCount++;
                     }
                 }
