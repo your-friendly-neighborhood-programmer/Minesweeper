@@ -102,6 +102,50 @@
                 box-shadow: 0 0 20px var(--cyber-purple), inset 0 0 20px var(--cyber-blue);
                 border-radius: 5px;
             }
+            
+            details {
+                width: 600px;
+                margin: 10px 0;
+                border: 1px solid var(--cyber-blue);
+                border-radius: 5px;
+                padding: 10px;
+                background-color: rgba(15, 240, 252, 0.05);
+                box-shadow: 0 0 5px var(--cyber-blue);
+                color: var(--cyber-blue);
+            }
+            
+            summary {
+                font-family: 'Orbitron', sans-serif;
+                font-weight: bold;
+                cursor: pointer;
+                padding: 5px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--neon-green);
+                text-shadow: 0 0 5px var(--neon-green);
+            }
+            
+            details ul {
+                margin-top: 10px;
+                margin-left: 20px;
+                list-style-type: square;
+            }
+            
+            details li {
+                margin: 8px 0;
+                line-height: 1.4;
+            }
+            
+            .keybind {
+                display: inline-block;
+                background-color: var(--cyber-purple);
+                color: white;
+                padding: 2px 8px;
+                margin: 0 2px;
+                border-radius: 3px;
+                border: 1px solid var(--cyber-blue);
+                box-shadow: 0 0 5px var(--cyber-purple);
+            }
         </style>
     </head>
     <body>
@@ -109,6 +153,20 @@
         <div class="options">
             <button id="newGame">New Game</button>
         </div>
+        
+        <details>
+            <summary>How To Play</summary>
+            <ul>
+                <li><strong>Objective:</strong> Find all mines without clicking on any of them. Progress through increasingly difficult levels.</li>
+                <li><strong>Left-click</strong> on a cell to reveal it. If it's a mine, you lose and restart at Level 1.</li>
+                <li><strong>Right-click</strong> on a cell to place or remove a flag where you think a mine is located.</li>
+                <li><strong>Numbers</strong> on revealed cells indicate how many mines are in the adjacent cells.</li>
+                <li><strong>Cells with 0</strong> neighboring mines will automatically reveal surrounding cells.</li>
+                <li><strong>To win:</strong> Correctly mark all mines with flags or reveal all non-mine cells.</li>
+                <li><strong>Difficulty:</strong> Each level increases the number of mines by 5, starting with 20 mines at Level 1.</li>
+            </ul>
+        </details>
+        
         <div class="info">
             <p id="level">Level: 1</p>
             <p id="flags">Flags: 0</p>
