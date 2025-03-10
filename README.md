@@ -1,6 +1,6 @@
 # <a href="https://your-friendly-neighborhood-programmer.github.io/Minesweeper/">Minesweeper Game</a>
 
-A classic implementation of the Minesweeper game using HTML, CSS, and JavaScript.
+A cyberpunk styled user interface for a classic implementation of the Minesweeper game using HTML, CSS, and JavaScript.
 
 ## Game Description
 
@@ -18,6 +18,7 @@ Minesweeper is a single-player puzzle game where the objective is to clear a rec
 - Mine counter showing total mines in the game
 - Win detection when all non-mine cells are revealed or all mines are flagged
 - Lose detection when a mine is clicked
+- Levels that increase the number of mines in the canvas on each subsequent level
 
 ## How to Play
 
