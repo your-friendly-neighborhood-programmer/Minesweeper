@@ -26,6 +26,7 @@
             <button id="newGame">New Game</button>
         </div>
         <div class="info">
+            <p id="level">Level: 1</p>
             <p id="flags">Flags: 0</p>
             <p id="mines">Mines: 0</p>
             <p id="timer">Elapsed Time: 0s</p>
@@ -37,7 +38,8 @@
             const squareWidth = 30;
             const gridSize = 20;
             const gameGrid = [];
-            const mines = 40;
+            let level = 1;
+            const mines = 15 + (level*5);
             let timerInterval = null;
             function draw() {
                 let x = 0;
@@ -135,6 +137,8 @@
                 }
                 if (isWon) {
                     alert("You win!");
+                    level += 1;
+                    document.getElementById("level").innerText = `Level: ${level}`;
                 }
                 requestAnimationFrame(animate);
             }
