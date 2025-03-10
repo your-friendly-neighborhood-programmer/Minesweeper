@@ -123,12 +123,11 @@
             const gridSize = 20;
             const gameGrid = [];
             let level = 1;
-            let mines = 15 + (level * 5); // Fixed to use the proper formula
+            let mines = 15 + (level * 5);
             let timerInterval = null;
             function draw() {
                 let x = 0;
-                // Use hardcoded colors instead of CSS variables for canvas drawing
-                ctx.fillStyle = "#1e1e2f"; // grid background color
+                ctx.fillStyle = "#1e1e2f";
                 ctx.fillRect(0, 0, 600, 600);
                 for (let y = 0; y < gridSize; y++) {
                     const row = [];
@@ -138,13 +137,9 @@
                         const flagged = false;
                         const neighbors = 0;
                         row.push({x, y, mine, toggled, flagged, neighbors});
-                        
-                        // Draw the cell with a visible color
-                        ctx.fillStyle = "#2a2a3a"; // cell background color
+                        ctx.fillStyle = "#2a2a3a";
                         ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                        
-                        // Add visible border to make cells stand out
-                        ctx.strokeStyle = "#0ff0fc"; // cyber blue border
+                        ctx.strokeStyle = "#0ff0fc";
                         ctx.lineWidth = 0.5;
                         ctx.strokeRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                     }
@@ -175,13 +170,12 @@
                 if (cell.mine) {
                     cell.toggled = true;
                     reveal();
-                    // Reset level to 1 when player loses
                     setTimeout(() => {
                         alert("Game Over! You hit a mine.");
                         level = 1;
                         document.getElementById("level").innerText = `Level: ${level}`;
                         newGame();
-                    }, 500); // Small delay so the player can see the mines
+                    }, 500); 
                     return;
                 }
                 if (cell.neighbors === 0) {
@@ -201,21 +195,17 @@
                     for (let x = 0; x < gridSize; x++) {
                         const cell = gameGrid[y][x];
                         if (cell.mine && cell.toggled) {
-                            ctx.fillStyle = "#FF1744";  // bright red for mines
+                            ctx.fillStyle = "#FF1744"; 
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                             ctx.fillStyle = "white";
                             ctx.font = "20px Orbitron";
                             ctx.fillText("💣", (x * squareWidth) + 10, (y * squareWidth) + 22);
                         } else if (cell.toggled) {
-                            // Change background color of revealed cells for better contrast
-                            ctx.fillStyle = "#101625";  // much darker blue for better contrast
+                            ctx.fillStyle = "#101625";
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                            
-                            // Add glowing border to revealed cells
-                            ctx.strokeStyle = "#39ff14"; // neon green border
+                            ctx.strokeStyle = "#39ff14";
                             ctx.lineWidth = 1;
                             ctx.strokeRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                            
                             if (cell.neighbors > 0) {
                                 ctx.font = "bold 20px Orbitron";
                                 if (cell.neighbors === 1) ctx.fillStyle = "#39ff14";  // neon green
@@ -229,18 +219,15 @@
                                 ctx.fillText(cell.neighbors, (x * squareWidth) + 15, (y * squareWidth) + 22);
                             }
                         } else if (cell.flagged) {
-                            ctx.fillStyle = "#2a304d";  // darker blue for flagged cells
+                            ctx.fillStyle = "#2a304d";
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                            ctx.fillStyle = "#FF10F0";  // neon pink
+                            ctx.fillStyle = "#FF10F0";
                             ctx.font = "20px Orbitron";
                             ctx.fillText("🚩", (x * squareWidth) + 10, (y * squareWidth) + 22);
                         } else {
-                            // Replace var(--cell-bg) with hardcoded color
-                            ctx.fillStyle = "#2a2a3a";  // cell background color
+                            ctx.fillStyle = "#2a2a3a";
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                            
-                            // Replace var(--cyber-blue) with hardcoded color
-                            ctx.strokeStyle = "#0ff0fc"; // cyber blue border
+                            ctx.strokeStyle = "#0ff0fc";
                             ctx.lineWidth = 0.5;
                             ctx.strokeRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                         }
