@@ -223,19 +223,6 @@
             <button id="flagToggle">Flag Mode: Off</button>
         </div>
         
-        <details>
-            <summary>How To Play</summary>
-            <ul>
-                <li><strong>Objective:</strong> Find all mines without clicking on any of them. Progress through increasingly difficult levels.</li>
-                <li><strong>Mobile:</strong> Tap a cell to reveal it or toggle "Flag Mode" to place flags instead.</li>
-                <li><strong>Desktop:</strong> Left-click to reveal, right-click to flag.</li>
-                <li><strong>Numbers</strong> on revealed cells indicate how many mines are in the adjacent cells.</li>
-                <li><strong>Cells with 0</strong> neighboring mines will automatically reveal surrounding cells.</li>
-                <li><strong>To win:</strong> Correctly mark all mines with flags or reveal all non-mine cells.</li>
-                <li><strong>Difficulty:</strong> Each level increases the number of mines by 5, starting with 20 mines at Level 1.</li>
-            </ul>
-        </details>
-        
         <div class="info">
             <div class="info-row">
                 <p id="level">Level: 1</p>
@@ -253,6 +240,18 @@
         <div id="game-container">
             <canvas id="minesweeperCanvas" width="600" height="600"></canvas>
         </div>
+        <details>
+            <summary>How To Play</summary>
+            <ul>
+                <li><strong>Objective:</strong> Find all mines without clicking on any of them. Progress through increasingly difficult levels.</li>
+                <li><strong>Mobile:</strong> Tap a cell to reveal it or toggle "Flag Mode" to place flags instead.</li>
+                <li><strong>Desktop:</strong> Left-click to reveal, right-click to flag.</li>
+                <li><strong>Numbers</strong> on revealed cells indicate how many mines are in the adjacent cells.</li>
+                <li><strong>Cells with 0</strong> neighboring mines will automatically reveal surrounding cells.</li>
+                <li><strong>To win:</strong> Correctly mark all mines with flags or reveal all non-mine cells.</li>
+                <li><strong>Difficulty:</strong> Each level increases the number of mines by 5, starting with 20 mines at Level 1.</li>
+            </ul>
+        </details>
         
         <script>
             const canvas = document.getElementById("minesweeperCanvas");
