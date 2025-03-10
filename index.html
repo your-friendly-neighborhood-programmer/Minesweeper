@@ -102,6 +102,50 @@
                 box-shadow: 0 0 20px var(--cyber-purple), inset 0 0 20px var(--cyber-blue);
                 border-radius: 5px;
             }
+            
+            details {
+                width: 600px;
+                margin: 10px 0;
+                border: 1px solid var(--cyber-blue);
+                border-radius: 5px;
+                padding: 10px;
+                background-color: rgba(15, 240, 252, 0.05);
+                box-shadow: 0 0 5px var(--cyber-blue);
+                color: var(--cyber-blue);
+            }
+            
+            summary {
+                font-family: 'Orbitron', sans-serif;
+                font-weight: bold;
+                cursor: pointer;
+                padding: 5px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--neon-green);
+                text-shadow: 0 0 5px var(--neon-green);
+            }
+            
+            details ul {
+                margin-top: 10px;
+                margin-left: 20px;
+                list-style-type: square;
+            }
+            
+            details li {
+                margin: 8px 0;
+                line-height: 1.4;
+            }
+            
+            .keybind {
+                display: inline-block;
+                background-color: var(--cyber-purple);
+                color: white;
+                padding: 2px 8px;
+                margin: 0 2px;
+                border-radius: 3px;
+                border: 1px solid var(--cyber-blue);
+                box-shadow: 0 0 5px var(--cyber-purple);
+            }
         </style>
     </head>
     <body>
@@ -109,6 +153,20 @@
         <div class="options">
             <button id="newGame">New Game</button>
         </div>
+        
+        <details>
+            <summary>How To Play</summary>
+            <ul>
+                <li><strong>Objective:</strong> Find all mines without clicking on any of them. Progress through increasingly difficult levels.</li>
+                <li><strong>Left-click</strong> on a cell to reveal it. If it's a mine, you lose and restart at Level 1.</li>
+                <li><strong>Right-click</strong> on a cell to place or remove a flag where you think a mine is located.</li>
+                <li><strong>Numbers</strong> on revealed cells indicate how many mines are in the adjacent cells.</li>
+                <li><strong>Cells with 0</strong> neighboring mines will automatically reveal surrounding cells.</li>
+                <li><strong>To win:</strong> Correctly mark all mines with flags or reveal all non-mine cells.</li>
+                <li><strong>Difficulty:</strong> Each level increases the number of mines by 5, starting with 20 mines at Level 1.</li>
+            </ul>
+        </details>
+        
         <div class="info">
             <p id="level">Level: 1</p>
             <p id="flags">Flags: 0</p>
@@ -123,12 +181,11 @@
             const gridSize = 20;
             const gameGrid = [];
             let level = 1;
-            let mines = 15 + (level * 5); // Fixed to use the proper formula
+            let mines = 15 + (level * 5);
             let timerInterval = null;
             function draw() {
                 let x = 0;
-                // Use hardcoded colors instead of CSS variables for canvas drawing
-                ctx.fillStyle = "#1e1e2f"; // grid background color
+                ctx.fillStyle = "#1e1e2f";
                 ctx.fillRect(0, 0, 600, 600);
                 for (let y = 0; y < gridSize; y++) {
                     const row = [];
@@ -138,13 +195,9 @@
                         const flagged = false;
                         const neighbors = 0;
                         row.push({x, y, mine, toggled, flagged, neighbors});
-                        
-                        // Draw the cell with a visible color
-                        ctx.fillStyle = "#2a2a3a"; // cell background color
+                        ctx.fillStyle = "#2a2a3a";
                         ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                        
-                        // Add visible border to make cells stand out
-                        ctx.strokeStyle = "#0ff0fc"; // cyber blue border
+                        ctx.strokeStyle = "#0ff0fc";
                         ctx.lineWidth = 0.5;
                         ctx.strokeRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                     }
@@ -175,6 +228,12 @@
                 if (cell.mine) {
                     cell.toggled = true;
                     reveal();
+                    setTimeout(() => {
+                        alert("Game Over! You hit a mine.");
+                        level = 1;
+                        document.getElementById("level").innerText = `Level: ${level}`;
+                        newGame();
+                    }, 500); 
                     return;
                 }
                 if (cell.neighbors === 0) {
@@ -194,14 +253,17 @@
                     for (let x = 0; x < gridSize; x++) {
                         const cell = gameGrid[y][x];
                         if (cell.mine && cell.toggled) {
-                            ctx.fillStyle = "#FF1744";  // bright red for mines
+                            ctx.fillStyle = "#FF1744"; 
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                             ctx.fillStyle = "white";
                             ctx.font = "20px Orbitron";
                             ctx.fillText("💣", (x * squareWidth) + 10, (y * squareWidth) + 22);
                         } else if (cell.toggled) {
-                            ctx.fillStyle = "#1e2635";  // dark blue
+                            ctx.fillStyle = "#101625";
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                            ctx.strokeStyle = "#39ff14";
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                             if (cell.neighbors > 0) {
                                 ctx.font = "bold 20px Orbitron";
                                 if (cell.neighbors === 1) ctx.fillStyle = "#39ff14";  // neon green
@@ -215,18 +277,15 @@
                                 ctx.fillText(cell.neighbors, (x * squareWidth) + 15, (y * squareWidth) + 22);
                             }
                         } else if (cell.flagged) {
-                            ctx.fillStyle = "#2a304d";  // darker blue for flagged cells
+                            ctx.fillStyle = "#2a304d";
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                            ctx.fillStyle = "#FF10F0";  // neon pink
+                            ctx.fillStyle = "#FF10F0";
                             ctx.font = "20px Orbitron";
                             ctx.fillText("🚩", (x * squareWidth) + 10, (y * squareWidth) + 22);
                         } else {
-                            // Replace var(--cell-bg) with hardcoded color
-                            ctx.fillStyle = "#2a2a3a";  // cell background color
+                            ctx.fillStyle = "#2a2a3a";
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
-                            
-                            // Replace var(--cyber-blue) with hardcoded color
-                            ctx.strokeStyle = "#0ff0fc"; // cyber blue border
+                            ctx.strokeStyle = "#0ff0fc";
                             ctx.lineWidth = 0.5;
                             ctx.strokeRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
                         }
