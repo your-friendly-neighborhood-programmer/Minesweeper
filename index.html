@@ -39,7 +39,7 @@
             const gridSize = 20;
             const gameGrid = [];
             let level = 1;
-            let mines = 15 + (level*5);
+            let mines = 15 + (level * 5);
             let timerInterval = null;
             function draw() {
                 let x = 0;
@@ -206,6 +206,7 @@
             }
             function newGame() {
                 gameGrid.length = 0;
+                mines = 15 + (level * 5);
                 draw();
                 makeMines();
                 getNeighbors(); 
@@ -213,6 +214,7 @@
                 timer(); 
                 document.getElementById("flags").innerText = "Flags: 0";
                 document.getElementById("mines").innerText = `Mines: ${mines}`;
+                document.getElementById("level").innerText = `Level: ${level}`;
             }
             document.getElementById("newGame").addEventListener("click", newGame);
             newGame();
