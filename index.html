@@ -175,6 +175,13 @@
                 if (cell.mine) {
                     cell.toggled = true;
                     reveal();
+                    // Reset level to 1 when player loses
+                    setTimeout(() => {
+                        alert("Game Over! You hit a mine.");
+                        level = 1;
+                        document.getElementById("level").innerText = `Level: ${level}`;
+                        newGame();
+                    }, 500); // Small delay so the player can see the mines
                     return;
                 }
                 if (cell.neighbors === 0) {
@@ -200,8 +207,15 @@
                             ctx.font = "20px Orbitron";
                             ctx.fillText("💣", (x * squareWidth) + 10, (y * squareWidth) + 22);
                         } else if (cell.toggled) {
-                            ctx.fillStyle = "#1e2635";  // dark blue
+                            // Change background color of revealed cells for better contrast
+                            ctx.fillStyle = "#101625";  // much darker blue for better contrast
                             ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                            
+                            // Add glowing border to revealed cells
+                            ctx.strokeStyle = "#39ff14"; // neon green border
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                            
                             if (cell.neighbors > 0) {
                                 ctx.font = "bold 20px Orbitron";
                                 if (cell.neighbors === 1) ctx.fillStyle = "#39ff14";  // neon green
