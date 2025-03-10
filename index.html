@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Minesweeper</title>
+        <style>
+            canvas {
+                cursor: pointer;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .info {
+                display: flex;
+                justify-content: space-around;
+                flex-direction: column;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Minesweeper</h1>
+        <div class="options">
+            <button id="newGame">New Game</button>
+        </div>
+        <div class="info">
+            <p id="flags">Flags: 0</p>
+            <p id="mines">Mines: 0</p>
+            <p id="timer">Elapsed Time: 0s</p>
+        </div>
+        <canvas id="minesweeperCanvas" width="600" height="600"></canvas>
+        <script>
+            const canvas = document.getElementById("minesweeperCanvas");
+            const ctx = canvas.getContext("2d");
+            const squareWidth = 30;
+            const gridSize = 20;
+            const gameGrid = [];
+            const mines = 35;
+            let timerInterval = null;
+            function draw() {
+                let x = 0;
+                ctx.fillStyle = "darkgray";
+                ctx.fillRect(0, 0, 600, 600);
+                for (let y = 0; y < gridSize; y++) {
+                    const row = [];
+                    for (let x = 0; x < gridSize; x++) {
+                        const mine = Math.random() < 0.1;
+                        const toggled = false;
+                        const flagged = false;
+                        const neighbors = 0;
+                        row.push({x, y, mine, toggled, flagged, neighbors});
+                        ctx.fillStyle = "lightgray";
+                        ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                    }
+                    gameGrid.push(row);
+                }
+            }
+            canvas.addEventListener('click', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const col = Math.floor(x / squareWidth);
+                const row = Math.floor(y / squareWidth);
+                toggleCell(row, col);
+            });
+            canvas.addEventListener('contextmenu', (e) => {
+                e.preventDefault(); 
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const col = Math.floor(x / squareWidth);
+                const row = Math.floor(y / squareWidth);
+                placeFlag(row, col);
+            });
+            function toggleCell(row, col) {
+                const cell = gameGrid[row][col];
+                if (cell.flagged || cell.toggled) return;
+                cell.toggled = true;
+                if (cell.mine) {
+                    cell.toggled = true;
+                    reveal();
+                    return;
+                }
+                if (cell.neighbors === 0) {
+                    if (row > 0) toggleCell(row - 1, col);
+                    if (row < gameGrid.length - 1) toggleCell(row + 1, col);
+                    if (col > 0) toggleCell(row, col - 1);
+                    if (col < gameGrid[row].length - 1) toggleCell(row, col + 1);
+                    if (row > 0 && col > 0) toggleCell(row - 1, col - 1);
+                    if (row > 0 && col < gameGrid[row].length - 1) toggleCell(row - 1, col + 1);
+                    if (row < gameGrid.length - 1 && col > 0) toggleCell(row + 1, col - 1);
+                    if (row < gameGrid.length - 1 && col < gameGrid[row].length - 1) toggleCell(row + 1, col + 1);
+                }
+            }
+            function animate() {
+                let isWon = true;
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        const cell = gameGrid[y][x];
+                        if (cell.mine && cell.toggled) {
+                            ctx.fillStyle = "red";
+                            ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                            ctx.fillStyle = "black";
+                            ctx.font = "20px Arial";
+                            ctx.fillText("💣", (x * squareWidth) + 10, (y * squareWidth) + 22);
+                        } else if (cell.toggled) {
+                            ctx.fillStyle = "white";
+                            ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                            if (cell.neighbors > 0) {
+                                ctx.font = "20px Arial";
+                                if (cell.neighbors === 1) ctx.fillStyle = "blue";
+                                else if (cell.neighbors === 2) ctx.fillStyle = "green";
+                                else if (cell.neighbors === 3) ctx.fillStyle = "red";
+                                else if (cell.neighbors === 4) ctx.fillStyle = "purple";
+                                else if (cell.neighbors === 5) ctx.fillStyle = "maroon";
+                                else if (cell.neighbors === 6) ctx.fillStyle = "turquoise";
+                                else if (cell.neighbors === 7) ctx.fillStyle = "black";
+                                else if (cell.neighbors === 8) ctx.fillStyle = "gray";
+                                ctx.fillText(cell.neighbors, (x * squareWidth) + 15, (y * squareWidth) + 22);
+                            }
+                        } else if (cell.flagged) {
+                            ctx.fillStyle = "yellow";
+                            ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                            ctx.fillStyle = "black";
+                            ctx.font = "20px Arial";
+                            ctx.fillText("🚩", (x * squareWidth) + 10, (y * squareWidth) + 22);
+                        } else {
+                            ctx.fillStyle = "lightgray";
+                            ctx.fillRect((x * squareWidth) + 5, (y * squareWidth) + 5, squareWidth - 10, squareWidth - 10);
+                        }
+                        if (cell.mine && !cell.flagged) isWon = false;
+                    }
+                }
+                if (isWon) {
+                    alert("You win!");
+                }
+                requestAnimationFrame(animate);
+            }
+            function makeMines() {
+                let minesMade = 0;
+                while (minesMade < mines) {
+                    const xMines = Math.floor(Math.random() * gridSize);
+                    const yMines = Math.floor(Math.random() * gridSize);
+                    if (!gameGrid[yMines][xMines].mine) {
+                        gameGrid[yMines][xMines].mine = true;
+                        minesMade++;
+                    } 
+               }
+            }
+            function getNeighbors() {
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        const cell = gameGrid[y][x];
+                        cell.neighbors = 0;
+                        if (cell.mine) continue;
+                        if (y > 0 && gameGrid[y - 1][x].mine) cell.neighbors++;
+                        if (y < gridSize - 1 && gameGrid[y + 1][x].mine) cell.neighbors++;
+                        if (x > 0 && gameGrid[y][x - 1].mine) cell.neighbors++;
+                        if (x < gridSize - 1 && gameGrid[y][x + 1].mine) cell.neighbors++;
+                        if (y > 0 && x > 0 && gameGrid[y - 1][x - 1].mine) cell.neighbors++;
+                        if (y > 0 && x < gridSize - 1 && gameGrid[y - 1][x + 1].mine) cell.neighbors++;
+                        if (y < gridSize - 1 && x > 0 && gameGrid[y + 1][x - 1].mine) cell.neighbors++;
+                        if (y < gridSize - 1 && x < gridSize - 1 && gameGrid[y + 1][x + 1].mine) cell.neighbors++;
+                    }
+                }
+            }
+            function reveal() {
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        gameGrid[y][x].toggled = true;
+                    }
+                }
+            }
+            function placeFlag(row, col) {
+                const cell = gameGrid[row][col];
+                if (cell.toggled) return;
+                cell.flagged = !cell.flagged;
+                updateFlagCount();
+            }
+            function updateFlagCount() {
+                let flagCount = 0;
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        if (gameGrid[y][x].flagged) flagCount++;
+                    }
+                }
+                document.getElementById("flags").innerText = `Flags: ${flagCount}`;
+            }
+            function timer() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                document.getElementById("timer").innerText = "Elapsed Time: 0s";
+                let time = 0;
+                timerInterval = setInterval(() => {
+                    time++;
+                    document.getElementById("timer").innerText = `Elapsed Time: ${time}s`;
+                }, 1000);
+            }
+            function newGame() {
+                gameGrid.length = 0;
+                draw();
+                makeMines();
+                getNeighbors(); 
+                animate();
+                timer(); 
+                document.getElementById("flags").innerText = "Flags: 0";
+                document.getElementById("mines").innerText = `Mines: ${mines}`;
+            }
+            document.getElementById("newGame").addEventListener("click", newGame);
+            newGame();
+        </script>
+    </body>
+</html>
